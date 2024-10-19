@@ -1,32 +1,26 @@
 package anas.kazay.model;
 
-import anas.kazay.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
 import java.util.List;
 
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
-public class Order {
+public class CartItem {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne
-    private User customer;
     @JsonIgnore
+    private Cart cart;
     @ManyToOne
-    private Restaurant restaurant;
-    private Long totalPrice;
-    private OrderStatus status;
-    private Date orderDate;
-    @ManyToOne
-    private Address deliveryAddress;
-    @OneToMany
-    private List<OrderItem> items;
-    private int totalItems;
+    private Food food;
 
+    private int quantity;
+    @ElementCollection
+    private List<String> ingredients;
+    private Long totalPrice;
 }
