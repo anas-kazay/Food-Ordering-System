@@ -2,6 +2,7 @@ package anas.kazay.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data @NoArgsConstructor @AllArgsConstructor
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class Food {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -21,7 +22,7 @@ public class Food {
     private Category category;
     @Column(length = 1000)
     @ElementCollection
-    private List<String> iamges;
+    private List<String> images;
 
     private boolean available;
     @ManyToOne
