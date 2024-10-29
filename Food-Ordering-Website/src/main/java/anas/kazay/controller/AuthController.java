@@ -46,6 +46,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user){
+        System.out.println(user.getEmail());
+        System.out.println(user.getPassword());
         User testUser = userRepository.findByEmail(user.getEmail());
         if(testUser != null) {
             throw new RuntimeException("User already exists");

@@ -34,10 +34,11 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getAllRestaurants());
     }
 
-    @GetMapping("/restaurantId")
+    @GetMapping("/{restaurantId}")
     public ResponseEntity<Restaurant> getRestaurantById(
             @PathVariable Long restaurantId
             ) throws Exception {
+        System.out.println("restaurantId: " + restaurantId);
         return ResponseEntity.ok(restaurantService.getRestaurantById(restaurantId));
     }
 
