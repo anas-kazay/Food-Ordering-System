@@ -13,8 +13,9 @@ import AddressCard from "./AddressCard";
 import AddLocation from "@mui/icons-material/AddLocationAlt";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-
-const items = [1, 1];
+import { useDispatch, useSelector } from "react-redux";
+import { store } from "../../State/store";
+import { createOrder } from "./../../State/Order/Action";
 
 export const style = {
   position: "absolute",
@@ -46,16 +47,37 @@ const Cart = () => {
   const createOrderUsingSelectedAddress = (address) => {};
   const handleOpenAddressModal = () => setOpen(true);
   const [open, setOpen] = React.useState(false);
+  const { cart, auth } = useSelector((store) => store);
+  const { cartItems } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+
   const handleClose = () => setOpen(false);
-  const handleSubmit = (value) => {
-    console.log(value);
+  const handleSubmit = (values) => {
+    const data = {
+      jwt: localStorage.getItem("jwt"),
+      order: {
+        restaurantId: cart.cartItems[0].food?.restaurant?.id,
+        deliveryAddress: {
+          fullName: auth.user?.fullName,
+          streetAddress: values.streetAddress,
+          city: values.city,
+          state: values.state,
+          pincode: values.pincode,
+          country: "Morocco",
+        },
+      },
+    };
+    console.log(data);
+    console.log("cart", cart);
+    dispatch(createOrder(data));
+    console.log(values);
   };
   return (
     <>
       <main className="lg:flex justify-between">
         <section className="lg:w-[30%] space-y-6 lg:min-h-screen pt-10">
-          {items.map((item) => (
-            <CartItem />
+          {cartItems?.map((item) => (
+            <CartItem item={item} key={item.id} />
           ))}
           <Divider />
           <div className="billDetails px-5 text-sm">
@@ -63,7 +85,7 @@ const Cart = () => {
             <div className="space-y-3">
               <div className="flex justify-between text-gray-400">
                 <p>Item Total</p>
-                <p>599MAD</p>
+                <p>{cart.cart?.total}DH</p>
               </div>
               <div className="flex justify-between text-gray-400">
                 <p>Deliver Fee</p>
@@ -77,7 +99,7 @@ const Cart = () => {
             </div>
             <div className="flex justify-between text-gray-400">
               <p>Total pay</p>
-              <p>1200MAD</p>
+              <p>{cart.cart?.total + 33 + 10}MAD</p>
             </div>
           </div>
         </section>

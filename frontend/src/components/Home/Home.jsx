@@ -5,6 +5,7 @@ import RestaurantCard from "../Restaurant/RestaurantCard";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllRestaurantsAction } from "./../../State/Restaurant/Action";
 import { store } from "./../../State/store";
+import { findCart } from "../../State/Cart/Action";
 
 const restaurants = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 

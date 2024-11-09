@@ -39,24 +39,37 @@ export const getMenuItemsByRestaurantId = (reqData) => {
   return async (dispatch) => {
     dispatch({ type: GET_MENU_ITEMS_BY_RESTAURANT_ID_REQUEST });
     try {
+      const params = new URLSearchParams();
+
+      if (reqData.vegetarian) {
+        params.append("isVegetarian", reqData.vegetarian);
+      }
+      if (reqData.nonvegetarian) {
+        params.append("isNonVegetarian", reqData.nonvegetarian);
+      }
+      if (reqData.seasonal) {
+        params.append("isSeasonal", reqData.seasonal);
+      }
+      if (reqData.foodCategory) {
+        params.append("foodCategory", reqData.foodCategory);
+      }
+
       const { data } = await api.get(
-        `api/food/restaurant/${reqData.restaurantId}
-        ?vegetarian=${reqData.vegetarian}
-        ?nonvegetarian=${reqData.nonvegetarian}
-        &seasonal=${reqData.seasonal}
-        &food_category=${reqData.foodCategory}`,
+        `api/food/restaurant/${reqData.restaurantId}?${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${reqData.jwt}`,
           },
         }
       );
-      console.log("menu items", data);
+
+      console.log("getMenuItemsByRestaurantId", data);
       dispatch({
         type: GET_MENU_ITEMS_BY_RESTAURANT_ID_SUCCESS,
         payload: data,
       });
     } catch (error) {
+      console.log("error", error);
       dispatch({
         type: GET_MENU_ITEMS_BY_RESTAURANT_ID_FAILURE,
         payload: error,

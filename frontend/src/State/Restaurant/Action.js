@@ -270,11 +270,14 @@ export const getRestaurantsCategory = ({ token, restaurantId }) => {
   return async (dispatch) => {
     dispatch({ type: GET_RESTAURANTS_CATEGORY_REQUEST });
     try {
-      const { data } = await api.get(`/api/category/restaurant`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const { data } = await api.get(
+        `/api/category/restaurant/${restaurantId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       dispatch({ type: GET_RESTAURANTS_CATEGORY_SUCCESS, payload: data });
       console.log("get Restaurants category", data);
     } catch (error) {

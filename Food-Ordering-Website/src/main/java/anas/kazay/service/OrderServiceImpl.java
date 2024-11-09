@@ -4,6 +4,7 @@ import anas.kazay.enums.OrderStatus;
 import anas.kazay.model.*;
 import anas.kazay.repository.*;
 import anas.kazay.request.CreateOrderRequest;
+import anas.kazay.request.OrderRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public Order createOrder(CreateOrderRequest orderRequest, User user) throws Exception {
+    public Order createOrder(OrderRequest orderRequest, User user) throws Exception {
         Address deliveryAddress = orderRequest.getDeliveryAddress();
         Address savedAddress = addressRepository.save(deliveryAddress);
         if(!user.getAddresses().contains(savedAddress)) {

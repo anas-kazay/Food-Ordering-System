@@ -8,7 +8,10 @@ import {
   FormGroup,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import React from "react";
+import React, { useState } from "react";
+import { categorizeIngredients } from "../utils/categorizeIngredients";
+import { useDispatch } from "react-redux";
+import { addItemToCart } from "../../State/Cart/Action";
 
 const demo = [
   {
@@ -21,10 +24,34 @@ const demo = [
   },
 ];
 
-const MenuCard = () => {
-  const handleCheckBoxChange = (item) => {
-    console.log(item);
+const MenuCard = ({ item }) => {
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const dispatch = useDispatch();
+
+  const handleCheckBoxChange = (ingredient) => {
+    if (selectedIngredients.includes(ingredient)) {
+      setSelectedIngredients(
+        selectedIngredients.filter((ing) => ing !== ingredient)
+      );
+    } else {
+      setSelectedIngredients([...selectedIngredients, ingredient]);
+    }
   };
+
+  const handleAddItemToCart = (e) => {
+    e.preventDefault();
+    const reqData = {
+      token: localStorage.getItem("jwt"),
+      cartItem: {
+        foodId: item.id, // Directly include foodId
+        quantity: 1, // Directly include quantity
+        ingredients: selectedIngredients.map((ing) => ing.name), // Directly include ingredients
+      },
+    };
+    dispatch(addItemToCart(reqData));
+    console.log("reqData", reqData);
+  };
+
   return (
     <Accordion>
       <AccordionSummary
@@ -36,16 +63,13 @@ const MenuCard = () => {
           <div className="lg:flex items-center lg:gap-5">
             <img
               className="w-[7rem] h-[7rem] object-cover"
-              src="https://images.pexels.com/photos/1251198/pexels-photo-1251198.jpeg?auto=compress&cs=tinysrgb&w=600"
+              src={item.images[0]}
               alt=""
             />
             <div className="space-y-1 lg:space-y-5 lg:max-w-2xl">
-              <p className="font-semibold text-xl">Burger</p>
-              <p>49 MAD</p>
-              <p className="text-gray-400">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque
-                pariatur commodi aperiam sunt amet.
-              </p>
+              <p className="font-semibold text-xl">{item.name}</p>
+              <p>{item.price} MAD</p>
+              <p className="text-gray-400">{item.description}</p>
             </div>
           </div>
         </div>
@@ -53,26 +77,37 @@ const MenuCard = () => {
       <AccordionDetails>
         <form>
           <div className="flex grep-5 flex-wrap">
-            {demo.map((item, index) => (
-              <div>
-                <p>{item.category}</p>
-                <FormGroup>
-                  {item.ingredients.map((ingredient, index) => (
-                    <FormControlLabel
-                      control={
-                        <Checkbox onChange={() => handleCheckBoxChange(item)} />
-                      }
-                      label={ingredient}
-                      key={index}
-                    />
-                  ))}
-                </FormGroup>
-              </div>
-            ))}
+            {Object.keys(categorizeIngredients(item.ingredients)).map(
+              (category, index) => (
+                <div key={index}>
+                  <p>{category}</p>
+                  <FormGroup>
+                    {categorizeIngredients(item.ingredients)[category].map(
+                      (ingredient, i) => (
+                        <FormControlLabel
+                          key={i}
+                          control={
+                            <Checkbox
+                              onChange={() => handleCheckBoxChange(ingredient)} // Pass the ingredient, not the item
+                            />
+                          }
+                          label={ingredient.name} // Use ingredient name for the label
+                        />
+                      )
+                    )}
+                  </FormGroup>
+                </div>
+              )
+            )}
           </div>
           <div className="pt-5">
-            <Button type="submit" variant="contained" disabled={true}>
-              {true ? "Add to Cart" : "Out of Stock"}
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={item.outOfStock}
+              onClick={handleAddItemToCart}
+            >
+              {item.outOfStock ? "Out of Stock" : "Add to Cart"}
             </Button>
           </div>
         </form>

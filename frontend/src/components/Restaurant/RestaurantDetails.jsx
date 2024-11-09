@@ -17,17 +17,7 @@ import {
   getRestaurantById,
   getRestaurantsCategory,
 } from "../../State/Restaurant/Action";
-import { getRestaurantsCategory } from "./../../State/Restaurant/Action";
-
-const categories = [
-  "pizza",
-  "burger",
-  "chinese",
-  "fast food",
-  "healthy",
-  "sushi",
-  "vegan",
-];
+import { getMenuItemsByRestaurantId } from "../../State/Menu/Action";
 
 const foodTypes = [
   { label: "All", value: "all" },
@@ -36,17 +26,19 @@ const foodTypes = [
   { label: "Seasonal", value: "seasonal" },
 ];
 
-const menu = [1, 2, 3, 4, 5];
-
 const RestaurantDetails = () => {
   const [foodType, setFoodType] = useState("all");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = localStorage.getItem("jwt");
-  const { auth, restaurant } = useSelector((store) => store);
+  const { auth, restaurant, menu } = useSelector((store) => store);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const { id } = useParams();
   const handleFilter = (event) => {
-    console.log(event.target.value, event.target.name);
+    setFoodType(event.target.value);
+  };
+  const handleFilterCategory = (event, value) => {
+    setSelectedCategory(value);
   };
 
   console.log("restaurant", restaurant);
@@ -54,8 +46,20 @@ const RestaurantDetails = () => {
   useEffect(() => {
     dispatch(getRestaurantById({ token, restaurantId: id }));
     dispatch(getRestaurantsCategory({ token, restaurantId: id }));
-    dispatch(getRestaurantsCategory({ token, restaurantId: id }));
   }, []);
+
+  useEffect(() => {
+    dispatch(
+      getMenuItemsByRestaurantId({
+        jwt: token,
+        restaurantId: id,
+        vegetarian: foodType === "vegetarian",
+        nonvegetarian: foodType === "non-vegetarian",
+        seasonal: foodType === "seasonal",
+        foodCategory: selectedCategory,
+      })
+    );
+  }, [selectedCategory, foodType]);
 
   return (
     <div className="px-5 lg:px-20">
@@ -121,7 +125,7 @@ const RestaurantDetails = () => {
               <FormControl className="py-10 space-y-5" component={"fieldset"}>
                 <RadioGroup
                   name="food_type"
-                  value={foodType || "all"}
+                  value={foodType}
                   onChange={handleFilter}
                 >
                   {foodTypes.map((type, index) => (
@@ -142,16 +146,17 @@ const RestaurantDetails = () => {
               </Typography>
               <FormControl className="py-10 space-y-5" component={"fieldset"}>
                 <RadioGroup
-                  name="food_type"
-                  value={foodType || "all"}
-                  onChange={handleFilter}
+                  name="food_category"
+                  //value={foodType || "all"}
+                  onChange={handleFilterCategory}
+                  value={selectedCategory}
                 >
-                  {categories.map((type, index) => (
+                  {restaurant.categories.map((type, index) => (
                     <FormControlLabel
                       key={index}
-                      value={type}
+                      value={type.name}
                       control={<Radio />}
-                      label={type}
+                      label={type.name}
                     />
                   ))}
                 </RadioGroup>
@@ -160,8 +165,8 @@ const RestaurantDetails = () => {
           </div>
         </div>
         <div className="space-y-5 lg:w-[80%] lg:pl-10">
-          {menu.map((item, index) => (
-            <MenuCard key={index} />
+          {menu.menuItems.map((item, index) => (
+            <MenuCard key={index} item={item} />
           ))}
         </div>
       </section>

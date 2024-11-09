@@ -7,6 +7,7 @@ import anas.kazay.repository.FoodRepository;
 import anas.kazay.request.CreateFoodRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,7 +28,8 @@ public class FoodServiceImpl implements FoodService{
                 .isVegetarian(createFoodRequest.isVegetarian())
                 .name(createFoodRequest.getName())
                 .price(createFoodRequest.getPrice())
-                .restaurant(restaurant)
+                .restaurant(restaurant).
+                createdAt(new Date())
                 .build();
         Food savedFood = foodRepository.save(food);
         restaurant.getFoods().add(savedFood);

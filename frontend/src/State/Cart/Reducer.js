@@ -49,11 +49,16 @@ const cartReducer = (state = initialState, action) => {
         ),
       };
     case actionTypes.REMOVE_CARTITEM_SUCCESS:
+      console.log(
+        "Updated cartItems:",
+        state.cartItems.filter((item) => item.id !== action.payload)
+      );
       return {
         ...state,
         loading: false,
         cartItems: state.cartItems.filter((item) => item.id !== action.payload),
       };
+
     case actionTypes.FIND_CART_FAILURE:
     case actionTypes.REMOVE_CARTITEM_FAILURE:
     case actionTypes.UPDATE_CARTITEM_FAILURE:

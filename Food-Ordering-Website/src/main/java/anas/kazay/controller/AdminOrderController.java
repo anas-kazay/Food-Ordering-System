@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/order")
+@RequestMapping("/api/admin")
 public class AdminOrderController {
     private OrderService orderService;
     private UserService userService;
@@ -23,7 +23,7 @@ public class AdminOrderController {
     }
 
 
-    @GetMapping("order/restaurants/{restaurantId}")
+    @GetMapping("order/restaurant/{restaurantId}")
     public ResponseEntity<List<Order>> getOrdersByUser(
             @RequestHeader("Authorization") String token,
             @PathVariable Long restaurantId,

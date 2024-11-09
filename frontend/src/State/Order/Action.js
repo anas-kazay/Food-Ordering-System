@@ -24,7 +24,7 @@ export const createOrder = (reqData) => {
       console.log("createOrder", data);
       dispatch({ type: CREATE_ORDER_SUCCESS, payload: data });
     } catch (error) {
-      console.log("createOrder", error);
+      console.log("createOrder error", error);
       dispatch({ type: CREATE_ORDER_FAILURE, payload: error });
     }
   };
@@ -34,13 +34,13 @@ export const getUsersOrders = (jwt) => {
   return async (dispatch) => {
     dispatch({ type: GET_USERS_ORDERS_REQUEST });
     try {
-      const { data } = api.get("/api/order/user", {
+      const response = await api.get("/api/order/user", {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
       });
-      console.log("getUsersOrders", data);
-      dispatch({ type: GET_USERS_ORDERS_SUCCESS, payload: data });
+      console.log("getUsersOrders", response);
+      dispatch({ type: GET_USERS_ORDERS_SUCCESS, payload: response.data });
     } catch (error) {
       console.log("getUsersOrders", error);
       dispatch({ type: GET_USERS_ORDERS_FAILURE, payload: error });
